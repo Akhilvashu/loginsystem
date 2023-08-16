@@ -12,10 +12,10 @@ public class Users {
     private Long id;
 
     @Column(name = "Username")
-    public String Username;
+    public String username;
 
     @Column(name = "Encrypted_Password")
-    public String Password;
+    public String password;
 
     public Long getId() {
         return id;
@@ -26,20 +26,20 @@ public class Users {
     }
 
     public String getUsername() {
-        return Username;
+        return username;
     }
 
     public void setUsername(String username) {
-        this.Username = username;
+        this.username = username;
     }
 
     public String getPassword() {
-        return Password;
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public void setPassword(String password) {
-        this.Password = password;
-    }
 
 
 }
