@@ -30,8 +30,5 @@ public class UserServiceimpl implements Service {
     public boolean isUsernameTaken(String username){
         return Repo.existsByUsername(username);
     }
-    @Override
-    public boolean passwordmatchingornot(String password){
-        return Repo.passwordmatch(password);
     }
-}
+
