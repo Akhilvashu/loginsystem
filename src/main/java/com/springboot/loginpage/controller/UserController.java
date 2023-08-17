@@ -2,10 +2,10 @@ package com.springboot.loginpage.controller;
 
 
 import com.springboot.loginpage.entity.Users;
-import com.springboot.loginpage.form.Changepasswordform;
 import com.springboot.loginpage.repository.UserRepository;
 import com.springboot.loginpage.service.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +17,9 @@ public class UserController {
     public Service UService;
     @Autowired
     public UserRepository Repo;
+
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
 
     @GetMapping("/registerform")
     public String register(Model model){
@@ -32,23 +35,26 @@ public class UserController {
 
     @PostMapping("/login")
     public String processLogin(@RequestParam String username, @RequestParam String password,Model model) {
-        Users user = Repo.findByUsername(username);
-        if (user != null) {
-            if (user.getPassword().equals(password)) {
+        try{
+            Users user = Repo.findByUsername(username);
+            if (passwordEncoder.matches(password, user.getPassword())) {
                 model.addAttribute("user",user);
+                return "dashboard";
             } else {
                 model.addAttribute("passworderror",true);
+                return "index";
             }
-        } else {
+        } catch (NullPointerException e){
             model.addAttribute("usernameerror",true);
+            return "index";
         }
-        return "index";
     }
 
 
     @PostMapping("/saveAccount")
     public String saveUser(@ModelAttribute Users user, Model model) {
         String newUsername = user.getUsername();
+        model.addAttribute("newUser",user);
 
         boolean errorUsernameTaken = UService.isUsernameTaken(newUsername);
 
@@ -57,6 +63,7 @@ public class UserController {
             return "register";
         }
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         UService.saveUser(user);
         return "index";
     }
@@ -66,56 +73,59 @@ public class UserController {
         UService.deleteUser(id);
         return "index";
     }
+
+
     @GetMapping("/changeusername/{id}")
     public String changeUsername(@PathVariable(value="id") Long id,
                                  @RequestParam String newusername,
                                  Model model) {
         Users user = UService.findaccount(id);
-        String old_username = user.getUsername();
+        boolean usernameTaken = UService.isUsernameTaken(newusername);
+        model.addAttribute("user",user);
 
-        boolean errorOldUsernameSame = old_username.equals(newusername);
-        boolean errorUsernameTaken = UService.isUsernameTaken(newusername);
-
-        if (!errorOldUsernameSame && !errorUsernameTaken) {
+        if (!usernameTaken) {
             user.setUsername(newusername);
             UService.saveUser(user);
+            model.addAttribute("usernameChanged", true); // Set the attribute
+            return "dashboard";
         } else {
-            model.addAttribute("errorOldUsernameSame", errorOldUsernameSame);
-            model.addAttribute("errorUsernameTaken", errorUsernameTaken);
+            model.addAttribute("errorUsernameTaken", true);
+            return "dashboard";
         }
-        return "index";
     }
 
 
-    @GetMapping("/passwordform")
-    public String passform(Model model){
-        Changepasswordform changepass = new Changepasswordform();
-        Users user = new Users();
-        model.addAttribute("Changepass", changepass);
-        model.addAttribute("user",user);
-        return "update_password";
-    }
+
+    @GetMapping("/passwordform/{id}")
+    public String passform(@PathVariable(value="id")Long id,Model model){
+        Users user = UService.findaccount(id);
+        model.addAttribute("user", user);
+        return "update_password";}
 
 
-    @GetMapping("/changepassword/{id}")
+
+    @PostMapping("/passwordform/{id}")
     public String changepassword(@PathVariable(value="id") Long id,
-                                 @RequestParam String oldpassword ,
+                                 @RequestParam String old_password ,
                                  @RequestParam String new_password,
                                  @RequestParam String confirm_password,
                                  Model model){
         Users user = UService.findaccount(id);
-        String old_password=user.getPassword();
-        if (old_password.equals(oldpassword)){
+        String oldpassword = user.getPassword();
+        model.addAttribute("user",user);
+
+        if (passwordEncoder.matches(old_password, oldpassword)) {
             if (new_password.equals(confirm_password)){
-                user.setPassword(new_password);
+                user.setPassword(passwordEncoder.encode(new_password));
                 UService.saveUser(user);
                 return "index";
             } else {
                 model.addAttribute("wrongconfirmpassword",true);
+                return "update_password";
             }
         } else {
             model.addAttribute("wrongoldpassword",true);
+            return "update_password";
         }
-        return "index";
     }
 }

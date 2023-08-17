@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Welcome</title>
+</head>
+<body>
+<h2>Welcome, <span th:text="${user.getUsername()}"></span>!</h2>
+
+<div th:if="${usernameChanged}">
+    <p style="color: green;">Username changed successfully!</p>
+</div>
+
+<!-- Change Username Button -->
+<button id="updateUsernameButton" onclick="showUpdateUsernameBox()">Change Username</button>
+
+<!-- Change Username Dialog -->
+<div id="updateUsernameBox" style="display: none;">
+    <form th:action="@{/changeusername/{id}(id=${user.id})}" method="GET">
+        <input type="text" id="newusername" name="newusername" placeholder="Enter new username">
+        <button type="submit">Tick</button>
+        <button type="button" onclick="cancelUpdateUsername()">Cancel</button>
+    </form>
+    <div th:if="${errorUsernameTaken}">
+        <p style="color: red;">Username is already taken.</p>
+    </div>
+</div>
+
+<!-- Update Password Button -->
+<p>
+    <a th:href="@{/passwordform/{id}(id=${user.id})}">Update Password</a>
+</p>
+
+<!-- Delete Account Button -->
+<p>
+    <a th:href="@{/deleteAccount/{id}(id=${user.id})}">Delete Account</a>
+</p>
+
+<p>Go back to <a th:href="@{/login}">Login</a> screen.</p>
+
+<script>
+    function showUpdateUsernameBox() {
+        var updateUsernameBox = document.getElementById("updateUsernameBox");
+        updateUsernameBox.style.display = "block";
+        var updateUsernameButton = document.getElementById("updateUsernameButton");
+        updateUsernameButton.style.display = "none";
+    }
+
+    function cancelUpdateUsername() {
+        var updateUsernameBox = document.getElementById("updateUsernameBox");
+        updateUsernameBox.style.display = "none";
+        var updateUsernameButton = document.getElementById("updateUsernameButton");
+        updateUsernameButton.style.display = "block";
+    }
+</script>
+
+</body>
+</html>

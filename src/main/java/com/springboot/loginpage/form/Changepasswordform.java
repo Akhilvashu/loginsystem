@@ -1,9 +1,11 @@
 package com.springboot.loginpage.form;
 
-import com.springboot.loginpage.controller.UserController;
+import com.springboot.loginpage.entity.Users;
 
 
 public class Changepasswordform {
+            Users user = new Users();
+            Long id = user.getId();
             private String oldpassword;
             private String new_password;
             private String confirm_password;
