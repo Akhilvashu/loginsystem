@@ -40,11 +40,15 @@
     <form th:action="@{/saveAccount}" method="post">
         <label for="newUsername">Username:</label>
         <input type="text" id="newUsername" name="username" th:value="${newUser.username}" required>
+
         <br>
         <label for="newPassword">Password:</label>
         <input type="password" id="newPassword" name="password" required>
         <br>
         <button class="btn" type="submit">Register</button>
+        <div th:if="${errorUsernameTaken}">
+            <p style="color: red";>This username is already taken.</p>
+        </div>
     </form>
     <p>Already have an account? <a th:href="@{/login}">Login</a></p>
 </div>

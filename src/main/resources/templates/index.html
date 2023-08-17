@@ -3,9 +3,8 @@
 <head>
     <title>Login</title>
 </head>
-<body>
 <h2>Login</h2>
-<form th:action="@{/login}" method="post">
+<form th:action="@{/login}" method="POST">
     <div>
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required />
@@ -25,19 +24,7 @@
     </div>
 
     <!-- Registration link -->
-    <p>Not a user? <a th:href="@{/register}">Register</a></p>
-
-    <!-- User information display -->
-    <div th:if="${user}">
-        <p>Welcome, <span th:text="${user.username}"></span>!</p>
-        <p>
-            <a th:href="@{/update-username}">Update Username</a> |
-            <a th:href="@{/passwordform}">Update Password</a> |
-            <a th:href="@{/deleteAccount/{id}}">Delete Account</a>
-        </p>
-    </div>
-
+    <p>Not a user? <a th:href="@{/registerform}">Register</a></p>
 </form>
 </body>
 </html>
-
