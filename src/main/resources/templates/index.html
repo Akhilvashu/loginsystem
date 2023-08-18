@@ -2,29 +2,90 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Login</title>
+    <style>
+        body {
+            font-family: "Arial", sans-serif;
+            background-color: #f0f4f8;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 5px;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .register-link {
+            margin-top: 10px;
+        }
+    </style>
 </head>
-<h2>Login</h2>
-<form th:action="@{/login}" method="POST">
-    <div>
+<body>
+<div class="container">
+    <h2>Welcome to Our Website</h2>
+
+    <form th:action="@{/login}" method="POST">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required />
-    </div>
-    <div>
+
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required />
-    </div>
-    <div>
-        <button type="submit">Login</button>
-    </div>
-    <div th:if="${usernameerror}">
-        <p style="color: red;">Incorrect username.</p>
-    </div>
-    <div th:if="${passworderror}">
-        <p style="color: red;">Incorrect password.</p>
-    </div>
 
-    <!-- Registration link -->
-    <p>Not a user? <a th:href="@{/registerform}">Register</a></p>
-</form>
+        <button type="submit">Login</button>
+
+        <div th:if="${usernameerror}" class="error-message">
+            Incorrect username.
+        </div>
+        <div th:if="${passworderror}" class="error-message">
+            Incorrect password.
+        </div>
+    </form>
+
+    <p class="register-link">Not a user? <a th:href="@{/registerform}" style="color: #3498db;">Register</a></p>
+</div>
 </body>
 </html>
