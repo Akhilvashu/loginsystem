@@ -26,6 +26,11 @@ public class UserServiceimpl implements Service {
     public Users findaccount(Long id){
         return Repo.findById(id).get();
     }
+
+    @Override
+    public Users finduserbyusername(String username){
+        return Repo.findByUsername(username);
+    }
     @Override
     public boolean isUsernameTaken(String username){
         return Repo.existsByUsername(username);
