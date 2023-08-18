@@ -49,9 +49,9 @@ public class UserController {
 
 
     @PostMapping("/saveAccount")
-    public String saveUser(@ModelAttribute Users user, Model model) {
+    public String saveUser(@ModelAttribute Users user,@RequestParam String Confirm_password, Model model) {
         String newUsername = user.getUsername();
-        model.addAttribute("newUser",user);
+        model.addAttribute("newUser", user);
 
         boolean errorUsernameTaken = UService.isUsernameTaken(newUsername);
 
@@ -59,10 +59,15 @@ public class UserController {
             model.addAttribute("errorUsernameTaken", true);
             return "register";
         }
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        UService.saveUser(user);
-        return "index";
+        if (user.getPassword().equals(Confirm_password)) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            UService.saveUser(user);
+            model.addAttribute("accountcreate",true);
+            return "index";
+        } else {
+            model.addAttribute("newandconfirmerror",true);
+            return "register";
+        }
     }
 
     @GetMapping("/deleteAccount/{id}")
