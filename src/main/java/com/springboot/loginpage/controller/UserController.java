@@ -2,7 +2,6 @@ package com.springboot.loginpage.controller;
 
 
 import com.springboot.loginpage.entity.Users;
-import com.springboot.loginpage.repository.UserRepository;
 import com.springboot.loginpage.service.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,8 +14,6 @@ public class UserController {
 
     @Autowired
     public Service UService;
-    @Autowired
-    public UserRepository Repo;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -36,7 +33,7 @@ public class UserController {
     @PostMapping("/login")
     public String processLogin(@RequestParam String username, @RequestParam String password,Model model) {
         try{
-            Users user = Repo.findByUsername(username);
+            Users user = UService.finduserbyusername(username);
             if (passwordEncoder.matches(password, user.getPassword())) {
                 model.addAttribute("user",user);
                 return "dashboard";
@@ -115,13 +112,18 @@ public class UserController {
         model.addAttribute("user",user);
 
         if (passwordEncoder.matches(old_password, oldpassword)) {
-            if (new_password.equals(confirm_password)){
-                user.setPassword(passwordEncoder.encode(new_password));
-                UService.saveUser(user);
-                return "index";
+            if (!new_password.equals(old_password)) {
+                if (new_password.equals(confirm_password)){
+                    user.setPassword(passwordEncoder.encode(new_password));
+                    UService.saveUser(user);
+                    return "index";
+                } else {
+                    model.addAttribute("wrongconfirmpassword", true);
+                    return "update_password";
+                }
             } else {
-                model.addAttribute("wrongconfirmpassword",true);
-                return "update_password";
+                    model.addAttribute("oldandnewmatch",true);
+                    return "update_password";
             }
         } else {
             model.addAttribute("wrongoldpassword",true);

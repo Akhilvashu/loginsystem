@@ -8,5 +8,5 @@ public interface Service {
     void deleteUser(Long Id);
     Users findaccount(Long id);
     boolean isUsernameTaken(String username);
-
+    public Users finduserbyusername(String username);
 }
